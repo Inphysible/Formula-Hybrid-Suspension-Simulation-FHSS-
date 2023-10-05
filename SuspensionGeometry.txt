@@ -1,0 +1,45 @@
+#[x, y, z] All are in inches, associated variable name in parentheses (CURRENT DESIGN)
+#---DIMENSIONS OF ONE FRONT SUSPENSION ASSEMBLY (EITHER WILL SUFFICE)---
+0, 0, 0 				#0: Normal vector of bellcrank plane through center of bearing. Leave as 0, 0, 0 to calculate automatically. (n_b)
+37.2244, 9.2500, 3.2500 		#1: Position of the center of the bearing (center)
+37.2240, 21.6133, 11.4060 		#2: Position of suspension rod-a_arm mount at the wheel's start position (pushrod_ref_len)
+37.2244, 13.9638, 1.3749 		#3: Position of suspension rod-bellcrank mount at the wheel's start position (pushrod_ref_len)
+37.2239, 10.2500, 10.5999 		#4: Position of shock absorber-chassis mount (shock_ref_point)
+37.2244, 13.8558, 3.4587 		#5: Position of shock absorber-bellcrank mount at the wheel's starting position (shock_point1)
+37.2238, 23.2202, 13.5132 		#6: Position of top A-arm-upright mount at the wheel's start position (upright_point_top)
+44., 10.2500 , 10.6000 			#7: Position of top A-arm-chassis mount towards front of car (n_aarm_top)
+32., 10.2500 , 10.5998 			#8: Position of top A-arm-chassis mount towards rear of car (n_aarm_top)
+37.2244, 23.4798, 3.3913 		#9: Position of bottom A-arm-upright mount at the wheel's start position (upright_point_bot)
+43.9895, 9.2500, 3.2500 		#10: Position of bottom A-arm-chassis mount towards front of car (n_aarm_bot)
+32., 9.2500, 3.2500 			#11: Position of bottom A-arm-chassis mount towards rear of car (n_aarm_bot)
+0, 0, 0 				#12: As x-coordinate, '0' if the suspension rod is connected to the top a-arm, and '1' if it is connected to the bottom one (which_arm)
+39.9306, 24.1537, 5.2537 		#13: Position of steering rod-upright mount at the wheel's start position and no tilt on steering (steering_rod_point)
+41.4910, 10.05, 5 			#14: Position of steering rod-steering rack mount with no tilt on steering (steering_rack_point1)
+41.4910, 12.4250, 5 			#15: Position of steering rod-steering rack mount with full tilt on steering; either direction will suffice (steering_rack_point_final)
+1, 0, 0 				#16: Point on plane through the geometric centerline of the chassis at z = 0 (centerline_point)
+61295, 0, 0 				#17: As x-coordinate, shock absorber spring-constant in N/m (k)
+50, 0, 0               		#18: As x-coordinate, number of points displayed across all resulting vectors, although 250-500 is usually a good measure of accuracy while preserving computational speed.
+#
+#
+#
+#[x, y, z] All are in inches, associated variable name in parentheses
+#---DIMENSIONS OF ONE REAR SUSPENSION ASSEMBLY (EITHER WILL SUFFICE)---
+0, 0, 0 				#0: Normal vector of bellcrank plane through center of bearing. Leave as 0, 0, 0 to calculate automatically. (n_b)
+-23.3269,  9.8639, 10.5443 		#1: Position of the center of the bearing (center)
+-26.7374, 21.3977, 4.7598 		#2: Position of suspension rod-a_arm mount at the wheel's start position (pushrod_ref_len)
+-22.7361, 11.5826, 10.4322 		#3: Position of suspension rod-bellcrank mount at the wheel's start position (pushrod_ref_len)
+-26.0866, 2.0373, 11.0070 		#4: Position of shock absorber-chassis mount (shock_ref_point)
+-21.3406, 8.7823, 12.2241 		#5: Position of shock absorber-bellcrank mount at the wheel's starting position (shock_point1)
+-27.6492, 22.1148, 12.8174 		#6: Position of top A-arm-upright mount at the wheel's start position (upright_point_top)
+-19.5, 11.7500, 8.6000 			#7: Position of top A-arm-chassis mount towards front of car (n_aarm_top)
+-27., 11.7500, 8.6000 			#8: Position of top A-arm-chassis mount towards rear of car (n_aarm_top)
+-27.6459, 23.6266, 3.3472 		#9: Position of bottom A-arm-upright mount at the wheel's start position (upright_point_bot)
+-19., 9.7500, 2.1000 			#10: Position of bottom A-arm-chassis mount towards front of car (n_aarm_bot)
+-27., 9.7500, 2.1000 			#11: Position of bottom A-arm-chassis mount towards rear of car (n_aarm_bot)
+1, 0, 0 				#12: As x-coordinate, '0' if the suspension rod is connected to the top a-arm, and '1' if it is connected to the bottom one (which_arm)
+-23.6488, 22.6029, 8.6230 		#13: Position of steering rod-upright mount at the wheel's start position and no tilt on steering (steering_rod_point)
+-19.6532, 10.8500, 5.67143		#14: Position of steering rod-chassis mount at the wheel's starting position (steering_rack_point1)
+-19.6532, 10.8500, 5.67143 		#15: Position of steering rod-chassis mount at the wheel's starting position; same point as previous (steering_rack_point_final)
+1, 0, 0 				#16: Point on plane through the geometric centerline of the chassis at z = 0 (centerline_point)
+61295, 0, 0 				#17: As x-coordinate, shock absorber spring-constant in N/m (k)
+50, 0, 0               		#18: As x-coordinate, number of points displayed across all resulting vectors, although 250-500 is usually a good measure of accuracy while preserving computational speed.
