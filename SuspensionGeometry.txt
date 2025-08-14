@@ -18,7 +18,7 @@
 41.4910, 12.4250, 5 			#15: Position of steering rod-steering rack mount with full tilt on steering; either direction will suffice (steering_rack_point_final)
 1, 0, 0 				#16: Point on plane through the geometric centerline of the chassis at z = 0 (centerline_point)
 61295, 0, 0 				#17: As x-coordinate, shock absorber spring-constant in N/m (k)
-50, 0, 0               		#18: As x-coordinate, number of points displayed across all resulting vectors, although 250-500 is usually a good measure of accuracy while preserving computational speed.
+350, 0, 0               		#18: As x-coordinate, number of points displayed across all resulting vectors, although 250-500 is usually a good measure of accuracy while preserving computational speed.
 #
 #
 #
@@ -42,4 +42,4 @@
 -19.6532, 10.8500, 5.67143 		#15: Position of steering rod-chassis mount at the wheel's starting position; same point as previous (steering_rack_point_final)
 1, 0, 0 				#16: Point on plane through the geometric centerline of the chassis at z = 0 (centerline_point)
 61295, 0, 0 				#17: As x-coordinate, shock absorber spring-constant in N/m (k)
-50, 0, 0               		#18: As x-coordinate, number of points displayed across all resulting vectors, although 250-500 is usually a good measure of accuracy while preserving computational speed.
+350, 0, 0               		#18: As x-coordinate, number of points displayed across all resulting vectors, although 250-500 is usually a good measure of accuracy while preserving computational speed.

@@ -1,10 +1,11 @@
 
 import SuspensionBellcrankSimulatorCLASSES as C1
 import SuspensionBellcrankSimulatorCLASSES2 as C2
+import SuspensionBellcrankSimulatorCLASSES3 as C3
 import numpy as np 
 import json
         
-def MAIN(suspension_parameters_front, suspension_parameters_rear, alt=0):
+def MAIN(suspension_parameters_front, suspension_parameters_rear, alt=0, car_parameters=np.zeros(9)):
     vec_1_arm = (suspension_parameters_front[3]-suspension_parameters_front[1], suspension_parameters_rear[3]-suspension_parameters_rear[1])  
     
     vec_1_shock = (suspension_parameters_front[5]-suspension_parameters_front[1], suspension_parameters_rear[5]-suspension_parameters_rear[1])           
@@ -62,6 +63,8 @@ def MAIN(suspension_parameters_front, suspension_parameters_rear, alt=0):
     shock_forces_front = np.ones(int(suspension_parameters_rear[18][0]))
     shock_forces_rear = np.ones(int(suspension_parameters_rear[18][0]))
     
+    M_wheel, M_chassis, k_tire, c_tire, k_shock, c_shock, preload_force, t0, t1 = car_parameters[:]
+    
     
     suspension_geometry_dict1 = C2.Vars(upright_point_top[0], center_point_top[0], upright_point_bot[0], center_point_bot[0], \
                                                         n_aarm_top[0], n_aarm_bot[0], suspension_parameters_front[2], int(suspension_parameters_front[18][0]), which_arm[0], \
@@ -78,8 +81,13 @@ def MAIN(suspension_parameters_front, suspension_parameters_rear, alt=0):
                     vec_1_arm[1], pushrod_ref_len[1], shock_forces_rear).Run()
     suspension_geometry_dict_front = {**suspension_geometry_dict1, **suspension_geometry_dict2}
     suspension_geometry_dict_rear = {**suspension_geometry_dict3, **suspension_geometry_dict4}
+    suspension_dynamics_dict_front = C3.Dynamics(suspension_geometry_dict_front, suspension_forces_dict2, M_wheel, M_chassis, \
+                                                            k_tire, c_tire, k_shock, c_shock, preload_force, t0, t1).StateSpaceDynamicMotion()
+    suspension_dynamics_dict_rear = C3.Dynamics(suspension_geometry_dict_rear, suspension_forces_dict4, M_wheel, M_chassis, k_tire, \
+                                                            c_tire, k_shock, c_shock, preload_force, t0, t1).StateSpaceDynamicMotion()
 
-    return suspension_geometry_dict_front, suspension_geometry_dict_rear, suspension_forces_dict2, suspension_forces_dict4
+
+    return suspension_geometry_dict_front, suspension_geometry_dict_rear, suspension_forces_dict2, suspension_forces_dict4, suspension_dynamics_dict_front, suspension_dynamics_dict_rear
 
 if __name__ == '__main__':
     
@@ -88,6 +96,9 @@ if __name__ == '__main__':
     suspension_parameters_rear = suspension_parameters[19:]
     suspension_parameters_front_alt = np.copy(suspension_parameters_front)
     suspension_parameters_rear_alt = np.copy(suspension_parameters_rear)
+    
+    car_parameters = np.loadtxt("../CarData.txt", delimiter=",")
+
     
     for i in range(len(suspension_parameters_front)-3):
         if i == 12 or i == 0:
@@ -103,10 +114,12 @@ if __name__ == '__main__':
             
     suspension_parameters_front_alt[15][1] = suspension_parameters_front_alt[15][1]+(2*np.abs(suspension_parameters_front_alt[15][1] - suspension_parameters_front_alt[14][1]))
     
-    suspension_geometry_dict_front, suspension_geometry_dict_rear, suspension_forces_dict2, suspension_forces_dict4 \
-        = MAIN(suspension_parameters_front, suspension_parameters_rear)
-    suspension_geometry_dict_front_alt, suspension_geometry_dict_rear_alt, suspension_forces_dict2_alt, suspension_forces_dict4_alt \
-        = MAIN(suspension_parameters_front_alt, suspension_parameters_rear_alt, 1)
+    suspension_geometry_dict_front, suspension_geometry_dict_rear, suspension_forces_dict2, suspension_forces_dict4, \
+        suspension_dynamics_dict_front, suspension_dynamics_dict_rear \
+        = MAIN(suspension_parameters_front, suspension_parameters_rear, 0, car_parameters)
+    suspension_geometry_dict_front_alt, suspension_geometry_dict_rear_alt, suspension_forces_dict2_alt, suspension_forces_dict4_alt, \
+        suspension_dynamics_dict_front_alt, suspension_dynamics_dict_rear_alt \
+        = MAIN(suspension_parameters_front_alt, suspension_parameters_rear_alt, 1, car_parameters)
         
     
     for i, a in enumerate(suspension_geometry_dict_front):
@@ -119,6 +132,12 @@ if __name__ == '__main__':
         suspension_forces_dict4[str(a)] = suspension_forces_dict4[str(a)].tolist()
         suspension_forces_dict2_alt[str(a)] = suspension_forces_dict2_alt[str(a)].tolist()
         suspension_forces_dict4_alt[str(a)] = suspension_forces_dict4_alt[str(a)].tolist()
+    for i, a in enumerate(suspension_dynamics_dict_front):
+        suspension_dynamics_dict_front[str(a)] = suspension_dynamics_dict_front[str(a)].tolist()
+        suspension_dynamics_dict_rear[str(a)] = suspension_dynamics_dict_rear[str(a)].tolist()
+        suspension_dynamics_dict_front_alt[str(a)] = suspension_dynamics_dict_front_alt[str(a)].tolist()
+        suspension_dynamics_dict_rear_alt[str(a)] = suspension_dynamics_dict_rear_alt[str(a)].tolist()
+
     with open("../outputs/SuspensionDynamicGeometryFRONT.txt", 'w') as g1, open("../outputs/SuspensionDynamicGeometryREAR.txt", 'w') as g2, \
         open("../outputs/SuspensionDynamicGeometryFRONTalt.txt", 'w') as g3, open("../outputs/SuspensionDynamicGeometryREARalt.txt", 'w') as g4:
         g1.truncate(0)
@@ -147,17 +166,37 @@ if __name__ == '__main__':
     f2.close()
     f3.close()
     f4.close()
+    with open("../outputs/SuspensionDynamicsFRONT.txt", 'w') as e1, open("../outputs/SuspensionDynamicsREAR.txt", 'w') as e2, \
+        open("../outputs/SuspensionDynamicsFRONTalt.txt", 'w') as e3, open("../outputs/SuspensionDynamicsREARalt.txt", 'w') as e4:
+        e1.truncate(0)
+        e1.write(json.dumps(suspension_dynamics_dict_front))
+        e2.truncate(0)
+        e2.write(json.dumps(suspension_dynamics_dict_rear))
+        e3.truncate(0)
+        e3.write(json.dumps(suspension_dynamics_dict_front_alt))
+        e4.truncate(0)
+        e4.write(json.dumps(suspension_dynamics_dict_rear_alt))
+    e1.close()
+    e2.close()
+    e3.close()
+    e4.close()
+
     for i, a in enumerate(suspension_geometry_dict_front):
         suspension_geometry_dict_front[str(a)] = np.array(suspension_geometry_dict_front[str(a)])
         suspension_geometry_dict_rear[str(a)] = np.array(suspension_geometry_dict_rear[str(a)])
         suspension_geometry_dict_front_alt[str(a)] = np.array(suspension_geometry_dict_front_alt[str(a)])
         suspension_geometry_dict_rear_alt[str(a)] = np.array(suspension_geometry_dict_rear_alt[str(a)])
-    
     for i, a in enumerate(suspension_forces_dict2):
         suspension_forces_dict2[str(a)] = np.array(suspension_forces_dict2[str(a)])
         suspension_forces_dict4[str(a)] = np.array(suspension_forces_dict4[str(a)])
         suspension_forces_dict2_alt[str(a)] = np.array(suspension_forces_dict2_alt[str(a)])
         suspension_forces_dict4_alt[str(a)] = np.array(suspension_forces_dict4_alt[str(a)])
+    for i, a in enumerate(suspension_dynamics_dict_front):
+        suspension_dynamics_dict_front[str(a)] = np.array(suspension_dynamics_dict_front[str(a)])
+        suspension_dynamics_dict_rear[str(a)] = np.array(suspension_dynamics_dict_rear[str(a)])
+        suspension_dynamics_dict_front_alt[str(a)] = np.array(suspension_dynamics_dict_front_alt[str(a)])
+        suspension_dynamics_dict_rear_alt[str(a)] = np.array(suspension_dynamics_dict_rear_alt[str(a)])
+
         
     import SuspensionBellcrankSimulatorPLOTS
         
