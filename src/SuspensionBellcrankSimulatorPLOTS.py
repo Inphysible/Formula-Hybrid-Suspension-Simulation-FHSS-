@@ -1,4 +1,3 @@
-
 import SuspensionBellcrankSimulatorCLASSES as C1
 import SuspensionBellcrankSimulatorCLASSES3 as C3
 import sys
@@ -64,9 +63,18 @@ with open("../outputs/SuspensionDynamicForcesREARalt.txt") as f:
     suspension_forces_dict_rear_alt = json.load(f)
 for i, a in enumerate(suspension_forces_dict_rear_alt):
     suspension_forces_dict_rear_alt[a] = np.array(suspension_forces_dict_rear_alt[a])
-
-
-
+    
+with open("../outputs/SuspensionDynamicsFRONT.txt") as f:
+    suspension_dynamics_dict_front = json.load(f)
+for i, a in enumerate(suspension_dynamics_dict_front):
+    suspension_dynamics_dict_front[a] = np.array(suspension_dynamics_dict_front[a])
+    
+with open("../outputs/SuspensionDynamicsREAR.txt") as f:
+    suspension_dynamics_dict_rear = json.load(f)
+for i, a in enumerate(suspension_dynamics_dict_rear):
+    suspension_dynamics_dict_rear[a] = np.array(suspension_dynamics_dict_rear[a])
+    
+    
 suspension_parameters = np.loadtxt("../SuspensionGeometry.txt", delimiter=",")
 suspension_parameters_front = suspension_parameters[:19]
 suspension_parameters_rear = suspension_parameters[19:]
@@ -120,14 +128,6 @@ RLwheel, RLhub = C1.Wheel(suspension_geometry_dict_rear['steering_rod_pivots'], 
 RRwheel, RRhub = C1.Wheel(suspension_geometry_dict_rear_alt['steering_rod_pivots'], suspension_geometry_dict_rear_alt['steering_rod_turning'], suspension_geometry_dict_rear_alt['top_aarm_arc'], \
          suspension_geometry_dict_rear_alt['bot_aarm_arc'], suspension_geometry_dict_rear_alt['upright_vector'], 0.02, 0.254).get_wheel_points(1)
     
-    
-suspension_dynamics_dict_front = C3.Dynamics(suspension_geometry_dict_front, suspension_forces_dict_front).ExampleDynamicMotion1()
-
-    ## suspension_dynamics_dict_front_alt = # suspension_dynamics_dict_front; the geometries of the suspension assemblies on either side of the centerline are identical.
-
-suspension_dynamics_dict_rear = C3.Dynamics(suspension_geometry_dict_rear, suspension_forces_dict_rear).ExampleDynamicMotion1()
-
-    ## suspension_dynamics_dict_rear_alt = # suspension_dynamics_dict_rear; the geometries of the suspension assemblies on either side of the centerline are identical.
 
     
 # Create figure and figure objects
@@ -257,14 +257,14 @@ for i in range(4):
             ])
     
 for i in range(len(suspension_dynamics_dict_front['disp_indices'])):
-    frames_exdy1.append(frames[0][suspension_dynamics_dict_front['disp_indices'][i]]) 
-    frames_exdy1.append(frames[1][suspension_dynamics_dict_front['disp_indices'][i]]) 
-    frames_exdy1.append(frames[2][suspension_dynamics_dict_rear['disp_indices'][i]]) 
-    frames_exdy1.append(frames[3][suspension_dynamics_dict_rear['disp_indices'][i]])
+    frames_exdy1.append(frames[0][int(suspension_dynamics_dict_front['disp_indices'][i])]) 
+    frames_exdy1.append(frames[1][int(suspension_dynamics_dict_front['disp_indices'][i])]) 
+    frames_exdy1.append(frames[2][int(suspension_dynamics_dict_rear['disp_indices'][i])]) 
+    frames_exdy1.append(frames[3][int(suspension_dynamics_dict_rear['disp_indices'][i])])
     
-    frames_exdy2.append(frames[0][suspension_dynamics_dict_front['disp_indices'][i]])
+    frames_exdy2.append(frames[0][int(suspension_dynamics_dict_front['disp_indices'][i])])
     
-    frames_exdy3.append(frames[2][suspension_dynamics_dict_front['disp_indices'][i]])
+    frames_exdy3.append(frames[2][int(suspension_dynamics_dict_front['disp_indices'][i])])
 
 updatemenus_exdy1 = {"buttons": [
     {
@@ -525,9 +525,9 @@ fig_manual.write_html("../outputs/Animation of Dyanamics Manually (via sliders).
 
 
 fig = make_subplots(specs=[[{"secondary_y": True}, {"secondary_y": False}]], rows=1, cols=2, subplot_titles=("Shock Absorber Displacements & Chassis Force", "Chassis Position"))
-fig.add_trace(pgo.Scatter(x=suspension_dynamics_dict_front['time_evol'], y=suspension_dynamics_dict_front['shock_motion']['z'], name="Shock Displacement", line=dict(color='blue')), secondary_y=False, row=1, col=1)
-fig.add_trace(pgo.Scatter(x=suspension_dynamics_dict_front['time_evol'], y=suspension_dynamics_dict_front['chassis_force']['N'], name="Chassis Force", line=dict(color='red')), secondary_y=True, row=1, col=1)
-fig.add_trace(pgo.Scatter(x=suspension_dynamics_dict_front['time_evol'], y=suspension_dynamics_dict_front['chassis_motion']['z']+suspension_parameters_front[10][2], name="Chassis Position", \
+fig.add_trace(pgo.Scatter(x=suspension_dynamics_dict_front['time_evol'], y=suspension_dynamics_dict_front['shock_motion'], name="Shock Displacement", line=dict(color='blue')), secondary_y=False, row=1, col=1)
+fig.add_trace(pgo.Scatter(x=suspension_dynamics_dict_front['time_evol'], y=suspension_dynamics_dict_front['chassis_force'], name="Chassis Force", line=dict(color='red')), secondary_y=True, row=1, col=1)
+fig.add_trace(pgo.Scatter(x=suspension_dynamics_dict_front['time_evol'], y=suspension_dynamics_dict_front['chassis_motion']+suspension_parameters_front[10][2], name="Chassis Position", \
                           line=dict(color='grey')), row=1, col=2)
 fig.update_xaxes(title_text = "Time, t (s)", row=1, col=1)
 fig.update_xaxes(title_text = "Time, t (s)", row=1, col=2)
@@ -539,9 +539,9 @@ pio.renderers.default='browser'
 fig.show()
 
 fig2 = make_subplots(specs=[[{"secondary_y": True}, {"secondary_y": False}]], rows=1, cols=2, subplot_titles=("Shock Absorber Displacements & Chassis Force", "Chassis Position"))
-fig2.add_trace(pgo.Scatter(x=suspension_dynamics_dict_rear['time_evol'], y=suspension_dynamics_dict_rear['shock_motion']['z'], name="Shock Displacement", line=dict(color='blue')), secondary_y=False, row=1, col=1)
-fig2.add_trace(pgo.Scatter(x=suspension_dynamics_dict_rear['time_evol'], y=suspension_dynamics_dict_rear['chassis_force']['N'], name="Chassis Force", line=dict(color='red')), secondary_y=True, row=1, col=1)
-fig2.add_trace(pgo.Scatter(x=suspension_dynamics_dict_rear['time_evol'], y=suspension_dynamics_dict_rear['chassis_motion']['z']+suspension_parameters_rear[10][2], name="Chassis Position", \
+fig2.add_trace(pgo.Scatter(x=suspension_dynamics_dict_rear['time_evol'], y=suspension_dynamics_dict_rear['shock_motion'], name="Shock Displacement", line=dict(color='blue')), secondary_y=False, row=1, col=1)
+fig2.add_trace(pgo.Scatter(x=suspension_dynamics_dict_rear['time_evol'], y=suspension_dynamics_dict_rear['chassis_force'], name="Chassis Force", line=dict(color='red')), secondary_y=True, row=1, col=1)
+fig2.add_trace(pgo.Scatter(x=suspension_dynamics_dict_rear['time_evol'], y=suspension_dynamics_dict_rear['chassis_motion']+suspension_parameters_rear[10][2], name="Chassis Position", \
                           line=dict(color='grey')), row=1, col=2)
 fig2.update_xaxes(title_text = "Time, t (s)", row=1, col=1)
 fig2.update_xaxes(title_text = "Time, t (s)", row=1, col=2)

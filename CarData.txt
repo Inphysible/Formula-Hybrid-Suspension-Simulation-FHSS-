@@ -1,0 +1,11 @@
+#[Constant] All are in SI units, associated variable name in parentheses (CURRENT DESIGN)
+
+7.5 				#0: Total mass (rim and tire) of each wheel. (M_wheel)
+62.5 		#1: Total mass (excluding rim and tire) of the chassis. (M_chassis)
+1500000 		#2: Spring constant of the tires. (k_tire)
+250 		#3: Damping constant of the tires. (c_tire)
+61295 		#4: Spring constant of the shock absorber. (k_shock)
+4500 		#5: Damping constant of the shock absorber. (c_shock)
+778.45 		#6: Amount of force required to start compressing the shock absorber. (preload_force)
+0 			#7: Start time for dynamics calculation period. (t0)
+3.88 			#8: End time for dynamics calculation period. (t1)
